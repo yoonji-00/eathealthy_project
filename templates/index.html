@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <!-- JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+
+    <style type="text/css">
+        div.foodlist-box {
+            margin: 10px 0 20px 0;
+        }
+
+        table {
+            border: 1px solid;
+            border-collapse: collapse;
+        }
+
+        td,
+        th {
+            padding: 10px;
+            border: 1px solid;
+        }
+    </style>
+
+    <script>
+//        $(document).ready(function () {
+            // $("#cards-box").html("");
+
+  //      });
+
+
+        function requestFoodInfo() {
+            let foodName = $("#food-name").val();
+            let url = "http://openapi.foodsafetykorea.go.kr/api/";
+            let key = "358948b02a0945a19b66";
+            let restUrl = "/I2790/json/1/5/DESC_KOR=";
+            let completeUrl = url + key + restUrl + foodName;
+
+            $.ajax({
+                type: "GET",
+                url: completeUrl,
+                data: {},
+                success: function (response) {
+                    // Clear current results
+                    //$("#cards-box").html("");
+
+                    let rows = response["I2790"]["row"];
+                    for (let i = 0; i < rows.length; i++) {
+                        let foodName = rows[i]['DESC_KOR'];
+                        let foodCal = rows[i]['NUTR_CONT1'];
+                        let foodCarb = rows[i]['NUTR_CONT2'];
+                        let foodProt = rows[i]['NUTR_CONT3'];
+                        let foodFat = rows[i]['NUTR_CONT4'];
+                        let foodSugar = rows[i]['NUTR_CONT5'];
+                        let foodSodium = rows[i]['NUTR_CONT6'];
+                        let foodServingSize = rows[i]['SERVING_SIZE']
+                        makeCard(foodName, foodCal, foodCarb, foodProt, foodFat, foodSugar, foodSodium, foodServingSize);
+                    }
+                }
+            })
+        }
+
+        function makeCard(foodName, foodCal, foodCarb, foodProt, foodFat, foodSugar, foodSodium, foodServingSize) {
+            let tempHtml = `
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="checkbox">
+                                              <label><input type="checkbox" value=""> </label>
+                                            </div>
+                                        </th>
+                                        <th>${foodName}</th>
+                                        <th>${foodCal}</th>
+                                        <th>${foodCarb}</th>
+                                        <th>${foodProt}</th>
+                                        <th>${foodFat}</th>
+                                        <th>${foodSugar}</th>
+                                        <th>${foodSodium}</th>
+                                        <th>${foodServingSize}</th>
+                                    </tr>
+                                `
+            $('#cards-box').append(tempHtml);
+        }
+    </script>
+</head>
+<body>
+
+<div id="cards-box" class="foodlist-box">
+    <h2>내가 먹는 음식 이해하기</h2>
+    <p>내가 먹고 싶은, 혹은 먹은 음식 종류를 검색해주세요.</p>
+    <input id="food-name" placeholder="">
+    <button onclick="requestFoodInfo()" id="btn-post-box" type="button" class="btn btn-primary">검색</button>
+    <table class = "table">
+        <thead class = "thead-dark">
+        <tr>
+            <th scope="col">체크박스</th>
+            <th scope="col">식품명</th>
+            <th scope="col">총 칼로리</td>
+            <th scope="col">탄수화물</td>
+            <th scope="col">단백질</td>
+            <th scope="col">지방</td>
+            <th scope="col">당류</td>
+            <th scope="col">나트륨</td>
+            <th scope="col">총제공량</td>
+        </tr>
+        </thead>
+
+        <tbody id="cards-box">
+
+        </tbody>
+    </table>
+</div>
+
+
+</body>
+</html>
