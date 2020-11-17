@@ -28,10 +28,10 @@
     </style>
 
     <script>
-//        $(document).ready(function () {
-            // $("#cards-box").html("");
+        // $(document).ready(function () {
+        // $("#cards-box").html("");
 
-  //      });
+        //      });
 
 
         function requestFoodInfo() {
@@ -59,32 +59,76 @@
                         let foodSugar = rows[i]['NUTR_CONT5'];
                         let foodSodium = rows[i]['NUTR_CONT6'];
                         let foodServingSize = rows[i]['SERVING_SIZE']
-                        makeCard(foodName, foodCal, foodCarb, foodProt, foodFat, foodSugar, foodSodium, foodServingSize);
+                        makeCard(i, foodName, foodCal, foodCarb, foodProt, foodFat, foodSugar, foodSodium, foodServingSize);
                     }
                 }
             })
         }
 
-        function makeCard(foodName, foodCal, foodCarb, foodProt, foodFat, foodSugar, foodSodium, foodServingSize) {
+
+        function makeCard(i, foodName, foodCal, foodCarb, foodProt, foodFat, foodSugar, foodSodium, foodServingSize) {
             let tempHtml = `
                                     <tr>
                                         <th scope="row">
                                             <div class="checkbox">
-                                              <label><input type="checkbox" value=""> </label>
+                                              <label><input id="checkbox${i}" type="checkbox" value=""> </label>
                                             </div>
                                         </th>
-                                        <th>${foodName}</th>
+                                        <th id="foodName${i}">${foodName}</th>
+                                        <th id="foodCal${i}">${foodCal}</th>
+                                        <th id="foodCarb${i}">${foodCarb}</th>
+                                        <th id="foodProt${i}">${foodProt}</th>
+                                        <th id="foodFat${i}">${foodFat}</th>
+                                        <th id="foodSugar${i}">${foodSugar}</th>
+                                        <th id="foodSodium${i}">${foodSodium}</th>
+                                        <th id="foodServingSize${i}">${foodServingSize}</th>
+                                    </tr>
+                                `
+            $('#cards-box').append(tempHtml);
+        }
+
+        function summarizeNut(i, foodName, foodCal, foodCarb, foodProt, foodFat, foodSugar, foodSodium, foodServingSize) {
+            // read the check-boxed data list
+            // sumCal, sumCarb, sumProt, sumFat, sumSugar, sumSodium, sumServingSize 로 update
+            // makeSumCard()
+            let totalCal = 0;
+            var totalCheckboxes = $('input:checkbox').length
+            for (let i = 0; i < totalCheckboxes; i++) {
+                if ($("#checkbox${i}").is(":checked")) {
+                    {#let totalCal = $("#totalCal${i}")#}
+                    totalCal = totalCal + $("#foodCal${i}").val();
+                    {#totalCarb = totalCarb + foodCarb#}
+                    {#totalProt = totalProt + foodProt#}
+                    {#let totalFat = totalFat + foodFat#}
+                    {#let totalSugar = totalSugar + foodSugar#}
+                    {#let totalSodium = totalSodium + foodSodium#}
+                }
+            }
+
+            makeSumCard(i,totalCal, totalCarb, totalProt, totalFat, totalSugar, totalSodium)
+
+
+
+        }
+
+        function makeSumCard() {
+            // add the final line - sum of all data
+
+            let tempHtml = `
+                                    <tr>
+                                        <th>총합</th>
                                         <th>${foodCal}</th>
                                         <th>${foodCarb}</th>
                                         <th>${foodProt}</th>
                                         <th>${foodFat}</th>
                                         <th>${foodSugar}</th>
                                         <th>${foodSodium}</th>
-                                        <th>${foodServingSize}</th>
                                     </tr>
                                 `
             $('#cards-box').append(tempHtml);
         }
+
+
     </script>
 </head>
 <body>
@@ -94,20 +138,29 @@
     <p>내가 먹고 싶은, 혹은 먹은 음식 종류를 검색해주세요.</p>
     <input id="food-name" placeholder="">
     <button onclick="requestFoodInfo()" id="btn-post-box" type="button" class="btn btn-primary">검색</button>
-    <table class = "table">
-        <thead class = "thead-dark">
+    <table class="table">
+        <thead class="thead-dark">
         <tr>
             <th scope="col">체크박스</th>
             <th scope="col">식품명</th>
-            <th scope="col">총 칼로리</td>
-            <th scope="col">탄수화물</td>
-            <th scope="col">단백질</td>
-            <th scope="col">지방</td>
-            <th scope="col">당류</td>
-            <th scope="col">나트륨</td>
-            <th scope="col">총제공량</td>
+            <th scope="col">총 칼로리
+            </td>
+            <th scope="col">탄수화물
+            </td>
+            <th scope="col">단백질
+            </td>
+            <th scope="col">지방
+            </td>
+            <th scope="col">당류
+            </td>
+            <th scope="col">나트륨
+            </td>
+            <th scope="col">총제공량
+            </td>
         </tr>
         </thead>
+
+        <button onclick="summarizeNut()" id="btn-post-box" type="button" class="btn btn-primary">오늘 내가 먹은 것</button>
 
         <tbody id="cards-box">
 
